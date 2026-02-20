@@ -1,0 +1,35 @@
+def solve():
+    n = int(input())
+    a = [int(x) for x in input().split()]
+    b = [int(x) for x in input().split()]
+
+    for k in range(20, -1, -1):
+        aux = 0
+        mask = 1 << k
+
+        for x in a:
+            if x & mask:
+                aux += 1
+        for x in b:
+            if x & mask:
+                aux += 1
+
+        if aux % 2 == 0:
+            continue
+
+        for i in range(n - 1, -1, -1):
+            bit_a = (a[i] & mask) > 0
+            bit_b = (b[i] & mask) > 0
+
+            if bit_a != bit_b:
+                if (i + 1) % 2 != 0:
+                    print("Ajisai")
+                else:
+                    print("Mai")
+                return
+
+    print("Tie")
+
+t = int(input())
+for _ in range(t):
+    solve()

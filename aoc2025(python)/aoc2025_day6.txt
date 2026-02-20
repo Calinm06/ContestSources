@@ -1,0 +1,33 @@
+#part2
+f = open("date.in","r")
+
+numbers = []
+for line in f:
+    if line[0] == '+' or line[0] == '*':
+        aux = line.strip("\n ").replace(" ","")
+    else:
+        aux = line.strip("\n")
+    numbers.append(aux)
+
+sol,p_semne,aux = 0,0,0
+for col in range(len(numbers[0])): #nu uita sa scoti +1
+    ok,nr = True,0
+    for lin in range(len(numbers) - 1):
+        if numbers[lin][col] != ' ':
+            ok = False
+            nr  = nr * 10 + int(numbers[lin][col])
+    if ok:
+        sol += aux
+        aux = 0
+        p_semne += 1
+    else:
+        if aux == 0:
+            aux = nr
+        else:
+            if numbers[-1][p_semne] == '+':
+                aux += nr
+            else:
+                aux *= nr
+print(sol + aux)
+
+f.close()

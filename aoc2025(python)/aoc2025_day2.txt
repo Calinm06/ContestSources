@@ -1,0 +1,54 @@
+#part1
+f = open("date.in","r")
+
+def check(nr):
+    nr = str(nr)
+    if len(nr) % 2:
+        return False
+    else:
+        first_half,second_half = nr[:len(nr) // 2],nr[len(nr) // 2:]
+        if first_half == second_half:
+            return True
+        return False
+
+a = []
+for line in f:
+    a = line.split(',')
+
+sol = 0
+for testcase in a:
+    st,dr = testcase.split('-')
+    for number in range(int(st),int(dr) + 1):
+        if check(number):
+            sol += number
+
+print(sol)
+f.close()
+
+#part2
+f = open("date.in","r")
+
+def check(nr):
+    nr = str(nr)
+    n = len(nr)
+    for d in range(1,int(n ** 0.5) + 1):
+        if n % d == 0:
+            cnt = nr.count(nr[:d])
+            cnt1 = nr.count(nr[:(n // d)])
+            if (cnt > 1 and cnt == n // d) or (cnt1 > 1 and cnt1 == d):
+                return True
+    return False
+
+a = []
+for line in f:
+    a = line.split(',')
+
+sol = 0
+for testcase in a:
+    st,dr = testcase.split('-')
+    for number in range(int(st),int(dr) + 1):
+        if check(number):
+            sol += number
+
+print(sol)
+f.close()

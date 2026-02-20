@@ -1,0 +1,136 @@
+#include <iostream>
+#include <fstream>
+#include <algorithm>
+#include <vector>
+#include <set>
+#include <map>
+#include <queue>
+#include <string>
+#include<math.h>
+#include <cstdint>
+
+using namespace std;
+
+#define debug 1
+#if debug
+ifstream fin("input.txt");
+
+#else
+#define fin cin
+#endif
+
+int tmp[10001];
+int p[10001];
+int a[40001];
+vector<pair<int,int>>ans;
+int n;
+
+void build(int nod,int st,int dr) {
+
+      if (st == dr) {
+
+   a[nod] = p[st];
+
+      }
+   else {
+
+     int mij = (st+dr)/2;
+       build(2*nod,st,mij),build(2*nod+1,mij+1,dr);
+    a[nod] = max(a[2*nod],a[2*nod+1]);
+
+
+   }
+
+}
+
+int qry(int nod,int st,int dr,int l,int r) {
+
+    if (l<=st && dr<=r)
+       return a[nod];
+
+     if (st > dr || dr < l || st > r)
+      return 0;
+
+   int mij = (st+dr)/2;
+   int p1=0,p2 = 0;
+
+    if (mij>=l)
+       p1  = qry(2*nod,st,mij,l,r);
+   if (mij<r)
+      p2 = qry(2*nod+1,mij+1,dr,l,r);
+
+   return max(p1,p2);
+
+
+
+
+
+}
+void solve(int st,int dr) {
+
+      if (st == dr)
+         return;
+
+
+       int mij = (st+dr)/2;
+       int m1 = qry(1,1,n,st,mij);
+       int m2 = qry(1,1,n,mij+1,dr);
+
+
+ if (m2  < m1) {
+
+      ans.push_back({st,dr});
+    int poz = 0;
+    for (int i = mij+1;i<=dr;++i)
+          tmp[++poz] = p[i];
+
+    for (int i = st;i<=mij;++i)
+       tmp[++poz] = p[i];
+
+     for (int i = st;i<=dr;++i)
+        p[i] = tmp[i];
+
+       build(1,1,n);
+
+
+
+
+ }
+
+
+
+ solve(st,mij),solve(mij+1,dr);
+
+
+
+}
+
+
+
+
+
+int main() {
+
+  int ts;
+   fin >> ts;
+   while (ts--) {
+
+      ans.clear();
+
+        fin >> n;
+      for (int i = 1;i<=n;++i)
+         fin >> p[i];
+
+      build(1,1,n);
+      solve(1,n);
+
+      cout << ans.size() <<'\n';
+      for (auto i : ans)
+         cout << i.first << " " << i.second << '\n';
+
+
+
+   }
+
+
+}

@@ -1,0 +1,87 @@
+#part1
+f = open("date.in","r")
+
+matrix = []
+for line in f:
+    matrix.append(list(line.strip("\n")))
+
+sol = 0
+for lin in range(1,len(matrix)):
+    for col in range(len(matrix[0])):
+        if matrix[lin - 1][col] == '|':
+            if matrix[lin][col] == '.':
+                matrix[lin][col] = '|'
+            elif matrix[lin][col] == '^':
+                matrix[lin][col - 1] = matrix[lin][col + 1] = '|'
+                sol += 1
+print(sol)
+
+
+f.close()
+
+
+#part2
+f = open("date.in","r")
+
+def make_graph(lin,col,matrix,graf,dp):
+    lin_copil_dr,col_copil_dr,lin_copil_st,col_copil_st = -1,-1,-1,-1
+    for i in range(lin + 1,len(matrix)):
+        if matrix[i][col - 1] == '^' and lin_copil_st == col_copil_st == -1:
+            lin_copil_st,col_copil_st = i,col - 1
+        if matrix[i][col + 1] == '^' and lin_copil_dr == col_copil_dr == -1:
+            lin_copil_dr,col_copil_dr = i,col + 1
+
+    if (lin_copil_st,col_copil_st) != (-1,-1):
+        if (lin,col) not in graf:
+            graf[(lin,col)] = []
+        if (lin_copil_st,col_copil_st) not in graf[(lin,col)]:
+            graf[(lin,col)].append((lin_copil_st,col_copil_st))
+        make_graph(lin_copil_st, col_copil_st, matrix, graf,dp)
+
+    if (lin_copil_dr,col_copil_dr) != (-1,-1):
+        if (lin,col) not in graf:
+            graf[(lin,col)] = []
+        if (lin_copil_dr,col_copil_dr) not in graf[(lin,col)]:
+            graf[(lin,col)].append((lin_copil_dr,col_copil_dr))
+        make_graph(lin_copil_dr, col_copil_dr, matrix, graf,dp)
+
+
+    return 0
+
+def calculate_dp(lin,col,graf,dp,vizited):
+    if (lin,col) in graf:
+        for copil in graf[(lin,col)]:
+            if copil not in vizited[(lin,col)]:
+                dp[copil] += dp[(lin,col)]
+        for copil in graf[(lin,col)]:
+            vizited[(lin,col)].append(copil)
+            calculate_dp(copil[0],copil[1],graf,dp,vizited)
+
+
+matrix = []
+for line in f:
+    matrix.append(list(line.strip("\n")))
+
+graf = {}
+dp = {}
+nodes = [(lin,col) for lin in range(len(matrix)) for col in range(len(matrix[0])) if matrix[lin][col] == '^']
+vizited = {}
+for nod in nodes:
+    dp[nod] = 0
+    vizited[nod] = []
+dp[(2,7)] = 1
+make_graph(2,7,matrix,graf,dp)
+calculate_dp(2,7,graf,dp,vizited)
+
+for i in range(len(matrix)):
+    for j in range(len(matrix[0])):
+        if matrix[i][j] == '^':
+            matrix[i][j] = dp[(i,j)]
+
+for line in matrix:
+    print(line)
+for key in graf.keys():
+    print(key,end = " ")
+    print(graf[key])
+
+f.close()

@@ -1,0 +1,118 @@
+//https://qoj.ac/problem/12588
+#include <iostream>
+#include <fstream>
+#include <algorithm>
+#include <vector>
+#include <set>
+#include <map>
+#include <queue>
+#include <string>
+#include<math.h>
+#include <cstdint>
+
+using namespace std;
+
+#define debug 0
+#if debug
+ifstream fin("input.txt");
+#else
+#define fin cin
+#endif
+
+int t;
+
+map<char,vector<char>>make_graph(int n) {
+    set<pair<char,char>>aux;
+    map<char,vector<char>>graf;
+    for (int i = 1;i <= n;i++) {
+        char c,c1;
+        fin>>c>>c1;
+        aux.insert(make_pair(c,c1));
+    }
+
+    for (char c = 'a'; c <= 'z';c++)
+        for (char c1 = 'a';c1 <= 'z';c1++)
+            if (aux.find({c,c1}) == aux.end())
+                graf[c].push_back(c1);
+    return graf;
+}
+
+void find_cycle(char nod,map<char,vector<char>>&graf,set<char>&viz,vector<char>&cycle,vector<char>&sol,int start) {
+    viz.insert(nod);
+    cycle.push_back(nod);
+    for (char vecin : graf[nod]) {
+        if (viz.find(vecin) == viz.end()) {
+            find_cycle(vecin,graf,viz,cycle,sol,start);
+        }
+        else if (vecin == start) {
+            if (sol.empty())
+                sol = cycle;
+        }
+    }
+    cycle.pop_back();
+}
+
+vector<char> find_biggest_path(char nod,map<char,vector<char>>&graf,set<char>&viz) {
+    viz.insert(nod);
+    vector<char>maxim;
+    for (char vecin : graf[nod]) {
+        if (true) {
+            vector<char>aux = find_biggest_path(vecin,graf,viz);
+            if (aux.size() > maxim.size())
+                maxim = aux;
+        }
+    }
+    if (maxim.empty()) {
+        vector<char>aux = {nod};
+        return aux;
+    }
+    else {
+        maxim.insert(maxim.begin(),nod);
+        return maxim;
+    }
+}
+
+int main()
+{
+    fin>>t;
+    while (t--) {
+        int n;
+        fin>>n;
+        map<char,vector<char>>graf = make_graph(n);
+        bool ok = false;
+        for (char nod = 'a';nod <= 'z';nod++) {
+            set<char>viz;
+            vector<char>cycle,sol;
+            find_cycle(nod,graf,viz,cycle,sol,nod);
+            if (sol.empty() == false) {
+                for (int lin = 0;lin < 20;lin++) {
+                    int start = lin % sol.size();
+                    for (int col = 0;col < 20;col++) {
+                        cout<<sol[start];
+                        start++;
+                        start %= sol.size();
+                    }
+                    cout<<"\n";
+                }
+                ok = true;
+                break;
+            }
+        }
+        if (ok == false) {
+            vector<char>maxim;
+            for (char nod = 'a';nod <= 'z';nod++) {
+                set<char>viz;
+                vector<char>sol = find_biggest_path(nod,graf,viz);
+                if (sol.size() > maxim.size())
+                    maxim = sol;
+            }
+
+            int l = (maxim.size() >> 1) + (maxim.size() & 1);
+            for (int i = 0;i < l;i++) {
+                for (int j = i;j < i + l;j++)
+                    cout<<maxim[j];
+                cout<<"\n";
+            }
+        }
+    }
+}

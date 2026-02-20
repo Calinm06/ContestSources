@@ -1,0 +1,51 @@
+#part1
+f = open("date.in","r")
+
+intervals = []
+sol  = 0
+for line in f:
+    new_line = line.strip("\n")
+    if new_line == "":
+        continue
+    if new_line.find("-") != -1:
+        a,b = new_line.split("-")
+        intervals.append((int(a),int(b)))
+    else:
+        number = int(new_line)
+        for st,dr in intervals:
+            if st <= number <= dr:
+                sol += 1
+                break
+print(sol)
+f.close()
+
+#part2
+f = open("date.in","r")
+
+intervals = []
+sol  = 0
+maxim = -1
+for line in f:
+    new_line = line.strip("\n")
+    if new_line == "":
+        continue
+    if new_line.find("-") != -1:
+        a,b = new_line.split("-")
+        intervals.append((int(a),int(b)))
+        maxim = max(maxim,int(a),int(b))
+
+intervals.sort(key=lambda x: (x[0],x[1]))
+
+st,dr = intervals[0]
+intervals.append((1<<63,(1<<63) + 1))
+for i in range(1,len(intervals)):
+    a,b = intervals[i]
+    if dr < a:
+           sol += dr - st + 1
+           st,dr = a,b
+    else:
+        st = min(st,a)
+        dr = max(dr,b)
+
+print(sol)
+f.close()

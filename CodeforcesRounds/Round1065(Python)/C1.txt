@@ -1,0 +1,19 @@
+t = int(input())
+for _ in range(t):
+    n = int(input())
+    a = [int(x) for x in input().split()]
+    b = [int(x) for x in input().split()]
+
+    nr_unu_a = a.count(1)
+    nr_unu_b = b.count(1)
+
+    if (nr_unu_a + nr_unu_b) % 2 == 0:
+        print("Tie")
+    else:
+        for i in range(n - 1,-1,-1):
+            if a[i] != b[i]:
+                if (i + 1) % 2 != 0:
+                    print("Ajisai")
+                else:
+                    print("Mai")
+                break

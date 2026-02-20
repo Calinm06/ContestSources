@@ -1,0 +1,31 @@
+
+f = open("date.in","r")
+
+cnt = 50
+sol = 0
+
+for line in f:
+    direction = line[0]
+    numar = 0
+    for i in line:
+        if i >= '0' and i <= '9':
+            numar = numar * 10 + int(i)
+
+    sol += numar // 100
+    numar %= 100
+
+    if direction == 'R':
+        cnt += numar
+        if cnt >= 100:
+            sol += 1
+        cnt %= 100
+    else:
+        old_cnt = cnt
+        cnt -= numar
+        if cnt <= 0 and old_cnt > 0:
+            sol += 1
+        if cnt < 0:
+            cnt = 100 + cnt
+
+print(sol)
+f.close()

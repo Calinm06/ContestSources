@@ -1,0 +1,36 @@
+f = open("date.in","r")
+
+dx = [0,-1,-1,-1,0,1,1,1]
+dy = [-1,-1,0,1,1,1,0,-1]
+
+def check(lin,col,n,m,a):
+    if lin < 0 or lin > n - 1 or col < 0 or col > m - 1:
+        return False
+    if a[lin][col] == '.':
+        return False
+    return True
+
+a = []
+for line in f:
+    a.append(list(line))
+
+n,m = len(a),len(a[0])
+m -= 1
+sol = 1
+big_sol = 0
+while sol > 0:
+    sol = 0
+    for i in range(n):
+        for j in range(m):
+            if a[i][j] == '@':
+                aux = 0
+                for d in range(8):
+                    if check(i + dx[d],j + dy[d],n,m,a):
+                        aux += 1
+
+                if aux < 4:
+                    sol += 1
+                    a[i][j] = '.'
+    big_sol += sol
+print(big_sol)
+f.close()
